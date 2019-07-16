@@ -1,5 +1,5 @@
 <?php 
-namespace Myoperator;
+namespace MyOperator;
 
 define('LIBMEMCACHED_DEFAULT_HOST', '127.0.0.1');
 define('LIBMEMCACHED_DEFAULT_PORT', 11211);
