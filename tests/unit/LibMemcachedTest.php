@@ -385,6 +385,12 @@ class LibMemcachedTest extends TestCase
         );
     }
 
+    public function testSetResultcode()
+    {
+        $this->client->set($this->key, 1);
+        $this->assertEquals(0, $this->client->getResultCode());
+    }
+
     protected function tearDown()
     {
         $this->client->delete($this->key);

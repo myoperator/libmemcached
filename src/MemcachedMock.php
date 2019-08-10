@@ -67,6 +67,10 @@ class MemcachedMock
         return false;
     }
 
+    public function getResultCode() {
+        return 0; //Always succeed
+    }
+
     public function decrement($key, $offset = 1)
     {
         if (!$this->connected) {
