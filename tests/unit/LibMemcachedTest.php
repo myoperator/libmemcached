@@ -1,7 +1,7 @@
 <?php 
-include_once __DIR__.'/../vendor/autoload.php';
+
 use PHPUnit\Framework\TestCase;
-use Myoperator\LibMemcached;
+use MyOperator\LibMemcached;
 
 /**
 *  Corresponding Class to test YourClass class
@@ -50,7 +50,7 @@ class LibMemcachedTest extends TestCase
   {
         $this->key   = md5(microtime(true));
         $this->value = sha1($this->key);
-        $this->client = Myoperator\LibMemcached::getInstance(array('host' => $this->host, 'port' => 11211));
+        $this->client = LibMemcached::getMockInstance();
   }
 	
   /**
@@ -352,11 +352,14 @@ class LibMemcachedTest extends TestCase
     {
         $value = 523;
 
+
         $this->assertTrue($this->client->set($this->key, $value));
-        $this->assertEquals($value + 2, $this->client->increment($this->key, 2, 2));
-        //$this->assertEquals($value + 4, $this->client->incr($this->key, 2));
+        $this->assertEquals($value + 2, $this->client->increment($this->key, 2));
+        $value = $value + 2;
+        $this->assertEquals(($value + 3), $this->client->increment($this->key, 3, 2));
+        $value = $value + 3;
         $this->assertEquals(
-            $value + 2,
+            $value,
             $this->client->get($this->key)
         );
     }
@@ -382,103 +385,6 @@ class LibMemcachedTest extends TestCase
         );
     }
 
-    /**
-     * Test: Connection - real with success as well as failure.
-     *
-     * @author Benjamin Carl <opensource@clickalicious.de>
-     * @return void
-     * @access protected
-     * @expectedException \Exception
-     */
-    public function testConnectToAMemcachedDaemon()
-    {
-        ///var_dump($this->client->connect($this->host, 11211);
-        $this->assertTrue(
-            ($this->client->connect($this->host, 11211) instanceof Memcached)
-        );
-
-        // Now connect to a fake host/port with little timeout - just to get the exception tested
-        $this->client->connect(array('host' => '1.2.3.4', 'port' => '11211', 'timeout' => 1));
-    }
-
-    /**
-     * Test: Retrieve Stats from memcached daemon.
-     *
-     * @author Benjamin Carl <opensource@clickalicious.de>
-     * @return void
-     * @access protected
-     */
-    // public function testRetrieveStats()
-    // {
-    //     $stats = $this->client->stats();
-
-    //     $this->assertTrue($this->client->set($this->key, $this->value));
-    //     $this->assertEquals(
-    //         $this->value,
-    //         $this->client->get($this->key)
-    //     );
-
-    //     # Mostly the first key
-    //     $this->assertArrayHasKey(
-    //         'pid',
-    //         $stats
-    //     );
-
-    //     # Mostly the last key
-    //     $this->assertArrayHasKey(
-    //         'evictions',
-    //         $stats
-    //     );
-
-    //     $stats = $this->client->stats(Client::STATS_TYPE_ITEMS);
-
-    //     $this->assertArrayHasKey(
-    //         'items',
-    //         $stats
-    //     );
-
-    //     $stats = $this->client->stats(Client::STATS_TYPE_SLABS);
-
-    //     $this->assertArrayHasKey(
-    //         'active_slabs',
-    //         $stats
-    //     );
-
-    //     $this->assertGreaterThanOrEqual(
-    //         1,
-    //         $stats['active_slabs']
-    //     );
-
-    //     $slabs = $stats['active_slabs'];
-
-    //     $cachedump = array();
-
-    //     for ($i = 1; $i <= $slabs; ++$i) {
-    //         $cachedumpTemp = $this->client->stats(
-    //             Client::STATS_TYPE_CACHEDUMP,
-    //             $i,
-    //             Client::CACHEDUMP_ITEMS_MAX
-    //         );
-
-    //         $cachedump = array_merge_recursive(
-    //             $cachedump,
-    //             $cachedumpTemp
-    //         );
-    //     }
-
-    //     $this->assertArrayHasKey(
-    //         $this->key,
-    //         $cachedump
-    //     );
-    // }
-
-    /**
-     * Cleanup after single test. Remove the key created for tests.
-     *
-     * @author Benjamin Carl <opensource@clickalicious.de>
-     * @return void
-     * @access protected
-     */
     protected function tearDown()
     {
         $this->client->delete($this->key);

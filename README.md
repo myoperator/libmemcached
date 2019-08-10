@@ -68,6 +68,37 @@ The `composer.json` will look like
   $memcache->decrement('a'); // a =1
 ```
 
+## Mocking
+
+Since this is a memcache library, hence any code using this library, tends to avoid actual network requests (which this library
+makes) for its unit tests. 
+
+To prevent those network scenarios, this library conviniently provides a mocking instance to test some of the memcached's most
+used methods, which includes:
+
+- get
+- set
+- increment
+- decrement
+- addServer
+- getVersion
+
+To mock this library in any framework, you can simple use this sample code
+
+```php
+
+$mockedMemcacheInstance = \MyOperator\LibMemcached::getMockInstance();
+
+// Now you can pretty much do anything you'd expect with memcache, to simulate unit test behaviours
+// For example, setting and getting values is easy :)
+
+$mockedMemcacheInstance->set('key', 'val');
+
+$mockedMemcacheInstance->get('key'); //returns 'val'
+```
+
+Please see the `tests/unit` directory to see what methods can be mocked and how to use the mocks.
+
 ## TODO
 
 - Add `phpdoc` documentation
